@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <variable
+            name="bean"
+            type="com.exam.pay.bean.PaySelectType" />
+    </data>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/white">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_55"
+            android:textColor="@color/main_color"
+            android:text="請選擇支付方式"
+            android:textSize="@dimen/text_size_18"
+            android:gravity="center"
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_0_5"
+            android:background="@color/line"
+            />
+        <LinearLayout android:id="@+id/alipay_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:gravity="center_vertical"
+            android:background="@color/white"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:drawableLeft="@mipmap/icon_pay_alipay"
+                android:drawablePadding="@dimen/dp_15"
+                android:text="支付宝"
+                android:textColor="@color/black"
+                android:textSize="14sp" />
+            <ImageView android:id="@+id/iv_check_alipay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|center_vertical"
+                tools:src="@mipmap/select"
+                android:src="@{bean.type==2?@drawable/selected:@drawable/select}"/>
+        </LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_0_5"
+            android:background="@color/line"/>
+
+        <LinearLayout android:id="@+id/wechat_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:gravity="center_vertical"
+            android:background="@color/white"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:drawableLeft="@mipmap/icon_pay_wechat"
+                android:drawablePadding="@dimen/dp_15"
+                android:text="微信支付"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size_16" />
+            <ImageView android:id="@+id/iv_check_wechat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|center_vertical"
+                tools:src="@mipmap/selected"
+                android:src="@{bean.type==1?@drawable/selected:@drawable/select}"/>
+        </LinearLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_10"
+            android:background="@color/line_bg"
+            />
+        <TextView
+            android:id="@+id/tv_cancel"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_55"
+            android:textColor="@color/gray"
+            android:text="取消"
+            android:textSize="@dimen/text_size_16"
+            android:gravity="center"
+            />
+    </LinearLayout>
+</layout>
