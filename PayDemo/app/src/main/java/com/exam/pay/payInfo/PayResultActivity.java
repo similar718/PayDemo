@@ -32,7 +32,7 @@ public class PayResultActivity extends TourBaseActivity<PayViewModel, ActivityPa
         mContext = this;
         dataBinding.setModel(viewModel);
         dataBinding.setActivity(this);
-        StatusBarUtils.changeStatusBarColor(this, R.color.main_color);
+//        StatusBarUtils.changeStatusBarColor(this, R.color.main_color);
         isSuccess = getIntent().getBooleanExtra("isSuccess",false);
 
         initShowView();

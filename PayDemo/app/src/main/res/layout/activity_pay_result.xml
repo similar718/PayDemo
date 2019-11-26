@@ -18,7 +18,7 @@
         <RelativeLayout
             android:id="@+id/rl_top"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/dp_64"
+            android:layout_height="@dimen/dp_44"
             android:background="@color/main_color">
             <TextView
                 android:id="@+id/tv_top"

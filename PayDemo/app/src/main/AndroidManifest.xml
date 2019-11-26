@@ -3,6 +3,7 @@
     package="com.exam.pay">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" /> <!-- 用于访问wifi网络信息，wifi信息会用于进行网络定位 -->
 
     <application
         android:name=".base.PayApplication"
