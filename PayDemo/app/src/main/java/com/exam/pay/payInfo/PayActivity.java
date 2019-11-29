@@ -105,13 +105,23 @@ public class PayActivity extends TourBaseActivity<PayViewModel, ActivityPayBindi
             dataBinding.rlPayGoodsDesc.setVisibility(View.GONE);//商品描述
             dataBinding.rlPayTeminalIp.setVisibility(View.GONE);//終端IP
             dataBinding.rlPayNotifyAddress.setVisibility(View.GONE);//通知地址
+
+            dataBinding.rlPayTotalMoney.setVisibility(View.VISIBLE); // 總金額
+            dataBinding.rlPayInterfaceType.setVisibility(View.VISIBLE); // 接口類型
+            dataBinding.rlPayClientNum.setVisibility(View.VISIBLE); // 商戶號
         } else {
             dataBinding.tvPayTypeBtn.setText("支付寶");
             // 需要顯示的
             dataBinding.rlPayClientOrderNum.setVisibility(View.VISIBLE);//商戶訂單號
             dataBinding.rlPayGoodsDesc.setVisibility(View.VISIBLE);//商品描述
             dataBinding.rlPayTeminalIp.setVisibility(View.VISIBLE);//終端IP
-            dataBinding.rlPayNotifyAddress.setVisibility(View.VISIBLE);//通知地址
+
+            dataBinding.rlPayTotalMoney.setVisibility(View.VISIBLE); // 總金額
+
+            dataBinding.rlPayInterfaceType.setVisibility(View.GONE); // 接口類型
+            dataBinding.rlPayClientNum.setVisibility(View.GONE); // 商戶號
+
+            dataBinding.rlPayNotifyAddress.setVisibility(View.GONE);//通知地址
             // 需要隱藏的
             dataBinding.rlPayClientReturnNum.setVisibility(View.GONE);// 商戶退款訂單號
             dataBinding.rlPayReturnMoney.setVisibility(View.GONE); // 退款金額
@@ -140,6 +150,18 @@ public class PayActivity extends TourBaseActivity<PayViewModel, ActivityPayBindi
                     String order_id = dataBinding.etPayClientOrderNum.getText().toString().trim();
                     if (TextUtils.isEmpty(order_id)) {
                         ToastUtils.showText(mContext, "請輸入商戶訂單號");
+                        return;
+                    }
+                    if (TextUtils.isEmpty(dataBinding.etPayGoodsDesc.getText().toString().trim())) {
+                        ToastUtils.showText(mContext, "請輸入商品描述");
+                        return;
+                    }
+                    if (TextUtils.isEmpty(dataBinding.etPayTotalMoney.getText().toString().trim())) {
+                        ToastUtils.showText(mContext, "請輸入總金額");
+                        return;
+                    }
+                    if (TextUtils.isEmpty(dataBinding.etPayTeminalIp.getText().toString().trim())) {
+                        ToastUtils.showText(mContext, "請輸入終端IP");
                         return;
                     }
                     mOrderId = order_id;
@@ -174,7 +196,8 @@ public class PayActivity extends TourBaseActivity<PayViewModel, ActivityPayBindi
         mDialog.show();
     }
 
-    private String mAlipayUrl = "http://203.174.52.78:1123/api/AliAppPay/UnifiedOrderApp";
+//    private String mAlipayUrl = "http://203.174.52.78:1123/api/AliAppPay/UnifiedOrderApp";
+    private String mAlipayUrl = "http://168.63.248.244:81/api/AliAppPay/UnifiedOrderApp";
     private boolean mIsAlipay = false;
 
     private void goPay(){
@@ -196,10 +219,10 @@ public class PayActivity extends TourBaseActivity<PayViewModel, ActivityPayBindi
                 MediaType JSON = MediaType.parse("application/json; charset=utf-8");
                 JSONObject json = new JSONObject();
                 try {
-                    json.put("mch_create_ip", "127.0.0.1");
+                    json.put("mch_create_ip", dataBinding.etPayTeminalIp.getText().toString().trim());
                     json.put("out_trade_no", mOrderId);
-                    json.put("body", "测试");
-                    json.put("total_fee", 1);
+                    json.put("body", dataBinding.etPayGoodsDesc.getText().toString().trim());
+                    json.put("total_fee", dataBinding.etPayTotalMoney.getText().toString().trim());
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -247,19 +270,20 @@ public class PayActivity extends TourBaseActivity<PayViewModel, ActivityPayBindi
     }
 
     private void payByZfb(final String orderInfo) {
-        AsyncUtil.async(new Function<String, Map<String, String>>() {
-            @Override
-            public Map<String, String> apply(String o) throws Exception {
+//        AsyncUtil.async(new Function<String, Map<String, String>>() {
+//            @Override
+//            public Map<String, String> apply(String o) throws Exception {
                 PayTask alipay = new PayTask(PayActivity.this);
                 Map<String, String> map = alipay.payV2(orderInfo, true);
-                return map;
-            }
-        }, new Consumer<Map<String, String>>() {
-            @Override
-            public void accept(Map<String, String> map) throws Exception {
+//                return map;
+//            }
+//        }, new Consumer<Map<String, String>>() {
+//            @Override
+//            public void accept(Map<String, String> map) throws Exception {
                 String resultStatus = map.get("resultStatus");//
                 String result = map.get("result");//
                 String memo = map.get("memo");//
+                Log.e("ooooooooo","resultStatus = "+resultStatus + " result = "+result + " memo = "+memo);
                 if ("9000".equals(resultStatus)) {//支付成功
 //                    try {
 //                        JSONObject object = new JSONObject(result);
@@ -273,8 +297,8 @@ public class PayActivity extends TourBaseActivity<PayViewModel, ActivityPayBindi
                     mDemo = memo;
                     mHandler.sendEmptyMessage(MSG_ALIPAY_FAILED);
                 }
-            }
-        });
+//            }
+//        });
     }
 
     private String mDemo = "";
