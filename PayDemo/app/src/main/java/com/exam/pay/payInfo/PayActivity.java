@@ -33,7 +33,9 @@ import com.exam.pay.utils.StatusBarUtils;
 import com.exam.pay.utils.ToastUtils;
 import com.tencent.mm.opensdk.modelpay.PayReq;
 
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -196,8 +198,8 @@ public class PayActivity extends TourBaseActivity<PayViewModel, ActivityPayBindi
         mDialog.show();
     }
 
-//    private String mAlipayUrl = "http://203.174.52.78:1123/api/AliAppPay/UnifiedOrderApp";
-    private String mAlipayUrl = "http://168.63.248.244:81/api/AliAppPay/UnifiedOrderApp";
+    private String mAlipayUrl = "http://203.174.52.78:1123/api/AliAppPay/UnifiedOrderApp";
+//    private String mAlipayUrl = "http://168.63.248.244:81/api/AliAppPay/UnifiedOrderApp";
     private boolean mIsAlipay = false;
 
     private void goPay(){
@@ -270,16 +272,16 @@ public class PayActivity extends TourBaseActivity<PayViewModel, ActivityPayBindi
     }
 
     private void payByZfb(final String orderInfo) {
-//        AsyncUtil.async(new Function<String, Map<String, String>>() {
-//            @Override
-//            public Map<String, String> apply(String o) throws Exception {
+        AsyncUtil.async(new Function<String, Map<String, String>>() {
+            @Override
+            public Map<String, String> apply(String o) throws Exception {
                 PayTask alipay = new PayTask(PayActivity.this);
                 Map<String, String> map = alipay.payV2(orderInfo, true);
-//                return map;
-//            }
-//        }, new Consumer<Map<String, String>>() {
-//            @Override
-//            public void accept(Map<String, String> map) throws Exception {
+                return map;
+            }
+        }, new Consumer<Map<String, String>>() {
+            @Override
+            public void accept(Map<String, String> map) throws Exception {
                 String resultStatus = map.get("resultStatus");//
                 String result = map.get("result");//
                 String memo = map.get("memo");//
@@ -292,13 +294,27 @@ public class PayActivity extends TourBaseActivity<PayViewModel, ActivityPayBindi
 //                    } catch (JSONException e) {
 //                        e.printStackTrace();
 //                    }
-                    mHandler.sendEmptyMessage(MSG_ALIPAY_SUCCESS);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(mContext, "支付成功", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    EventBus.getDefault().post(new PayResultBus(true,0));
+//                    mHandler.sendEmptyMessage(MSG_ALIPAY_SUCCESS);
                 } else {
                     mDemo = memo;
-                    mHandler.sendEmptyMessage(MSG_ALIPAY_FAILED);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(mContext, "支付失败", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    EventBus.getDefault().post(new PayResultBus(false,0));
+//                    mHandler.sendEmptyMessage(MSG_ALIPAY_FAILED);
                 }
-//            }
-//        });
+            }
+        });
     }
 
     private String mDemo = "";
@@ -323,24 +339,43 @@ public class PayActivity extends TourBaseActivity<PayViewModel, ActivityPayBindi
                     }
                     break;
                 case MSG_ALIPAY_FAILED:
-                    ToastUtils.showText(mContext,mDemo);
-                    IntentManager.getInstance().goPayResultActivity(mContext,false);
-                    finish();
+                    Intent intent = new Intent(PayActivity.this, PayResultActivity.class);
+                    intent.putExtra("isSuccess",false);
+                    startActivity(intent);
+//                    runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            ToastUtils.showText(mContext,mDemo);
+//                            IntentManager.getInstance().goPayResultActivity(mContext,false);
+////                            finish();
+//                        }
+//                    });
                     break;
                 case MSG_ALIPAY_SUCCESS:
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            IntentManager.getInstance().goPayResultActivity(mContext,true);
-                        }
-                    });
-                    finish();
+                    Intent intent1 = new Intent(PayActivity.this, PayResultActivity.class);
+                    intent1.putExtra("isSuccess",true);
+                    startActivity(intent1);
+//                    runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            IntentManager.getInstance().goPayResultActivity(mContext,true);
+////                            finish();
+//                        }
+//                    });
                     break;
                 default:
                     break;
             }
         }
     };
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mHandler.removeMessages(MSG_ALIPAY_FAILED);
+        mHandler.removeMessages(MSG_ALIPAY_SUCCESS);
+        mHandler.removeMessages(SDK_PAY_FLAG);
+    }
 
     private void payByWx(Map<String,String> jsonMap) {
         try {
@@ -366,7 +401,7 @@ public class PayActivity extends TourBaseActivity<PayViewModel, ActivityPayBindi
         }
     }
 
-    @Subscribe
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void onPayResult(PayResultBus payResultBus){
         if(payResultBus!=null){
             if(payResultBus.isSuccess()){

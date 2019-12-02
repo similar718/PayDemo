@@ -10,8 +10,21 @@
         android:background="@color/main_color"
         android:textColor="@color/white"
         android:textSize="@dimen/text_size_18"
-        android:text="購買商品"
+        android:text="購買商品（旧接口）"
         android:gravity="center"
+        />
+
+    <TextView
+        android:id="@+id/tv_pay_goods_1"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_55"
+        android:background="@color/main_color"
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_size_18"
+        android:text="購買商品（新接口）"
+        android:layout_below="@+id/tv_pay_goods"
+        android:gravity="center"
+        android:layout_marginTop="@dimen/dp_10"
         />
 
 </RelativeLayout>

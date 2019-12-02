@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.exam.pay.payInfo.PayActivity;
+import com.exam.pay.payInfo.PayBackActivity;
 import com.exam.pay.payInfo.PayResultActivity;
 
 public class IntentManager {
@@ -56,10 +57,13 @@ public class IntentManager {
         startActivity(context, PayActivity.class);
     }
 
+    public void goPayBackActivity(Context context){
+        startActivity(context, PayBackActivity.class);
+    }
+
     public void goPayResultActivity(Context context,boolean isSuccess){
         Intent intent = new Intent(context, PayResultActivity.class);
         intent.putExtra("isSuccess",isSuccess);
         startActivity(context,intent);
     }
-
 }

@@ -15,6 +15,7 @@
         android:theme="@style/AppTheme.Main">
         <activity android:name=".payInfo.PayResultActivity"></activity>
         <activity android:name=".payInfo.PayActivity" />
+        <activity android:name=".payInfo.PayBackActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
